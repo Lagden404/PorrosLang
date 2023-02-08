@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-#include <ctype.h>
+
 
 #define TOTALTOKENS 32
 
@@ -23,6 +23,11 @@ struct tokenListElement
 
 char *getFileAsString(FILE *file);
 int getTokenType(char* token, char** list);
+int getFileLength(FILE *file);
+int countTokens(char* fileAsString, char** tokenList);
+struct tokenListElement* returnTokenizedArray(char* fileAsString, char** tokenList);
+size_t getLongestStringLength(char** stringArray);
+int countString (const char* string, const char* substring);
 
 int main (int argc, char *argv[])
 {
@@ -37,50 +42,69 @@ int main (int argc, char *argv[])
     //token dictionary array
     char* tokens[TOTALTOKENS] = {"(", ")", "[", "]", "+", "-", "*", "/", "^", "<", ">", "=", ">=", "<=", "!=", "==", "OR", "AND", "NOT", "input", "print", "if", "elseif", "else", "do", "true", "false", "define", "return", "\n", ";", " "};
 
-    printf("%d\n", getTokenType("", tokens));
+    //struct tokenListElement tokenizedArray[];
 
-    fileAsString = getFileAsString(file);
+    fileAsString = getFileAsString(file); 
 
-    if (file == NULL)
-        {
-            //prints an error message if no file is given and exits the program
-            printf("Error loading file!");
+//if (file == NULL)
+//   {
+//        //prints an error message if no file is given and exits the program
+//       printf("Error loading file!");
 
-            exit(1);
-        }
+//            exit(1);
+//       }
 
-
+    printf("%d", countTokens("(if (porros == true) do (i + 2))", tokens)); 
     fclose(file);
 
     return 0;
 }
 
-int countTokens (FILE *file)
+struct tokenListElement* returnTokenizedArray(char* fileAsString, char** tokenList)
 {
-    int numTokens = 0;
+    struct tokenListElement* tokenizedArray[countTokens(fileAsString, tokenList)];
 
-    /* while (c != EOF)
-        {
-            if ()
-        }
-
-    */
-
-    return numTokens;
 }
 
-char* getFileAsString(FILE *file)
+int countTokens(char* fileAsString, char** tokenList)
 {
-    //copies file to a string
+    int count = 0;
+    char list[2][3] = {"==", "="};
+
+
+   // for(int i = 0; i < TOTALTOKENS; i++)
+    //{
+    //    strcpy(list[i], tokenList[i]);
+    //}
+
+    for (int i = 0; i < 2; i++) 
+    {
+        count += countString(fileAsString, list[i]);
+    }
+
+    //count += countString(fileAsString, tokenList[0]);
+    
+    
+    return count;
+}
+
+int getFileLength(FILE *file)
+{    
 
     size_t pos = ftell(file);
     fseek(file, 0, SEEK_END);
     size_t fileLength = ftell(file);
     fseek(file, pos, SEEK_SET);
 
-    char *fileAsString = malloc (sizeof (char) * fileLength);
+    return fileLength;
+}
 
-    fread(fileAsString, fileLength, 1, file);
+char* getFileAsString(FILE *file)
+{
+    //copies file to a string
+    char *fileAsString = malloc (sizeof (char) * (getFileLength(file)) );
+
+    fread(fileAsString, (getFileLength(file)), 1 , file);
 
     return fileAsString;
 
@@ -108,4 +132,17 @@ int getTokenType(char* token, char** tokenList)
     else if (i == 29 || i == 30) return 4; 
     else return 5;
 
+}
+
+int countString (const char* string, const char* substring)
+{
+    int count = 0;
+    const char *tmp = string;
+    
+    while (tmp = strstr(tmp, substring))
+    {
+        count ++;
+        tmp += strlen(substring);
+    }
+    return count;
 }
